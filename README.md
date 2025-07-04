@@ -1,0 +1,162 @@
+<div align="left">
+  <a href="docs/README_FR.md" target="_blank"><img src="https://img.shields.io/badge/🇫🇷-Version%20Française-0073E6?style=flat&labelColor=333" alt="Version Française" /></a>
+  <a href="docs/README_ES.md" target="_blank"><img src="https://img.shields.io/badge/🇪🇸-Versión%20Española-FFA500?style=flat&labelColor=333" alt="Versión Española" /></a>
+  <a href="docs/README_DE.md" target="_blank"><img src="https://img.shields.io/badge/🇩🇪-Deutsche%20Version-FFD700?style=flat&labelColor=333" alt="Deutsche Version" /></a>
+  <a href="docs/README_CN.md" target="_blank"><img src="https://img.shields.io/badge/🇨🇳-中文版-DE2910?style=flat&labelColor=333" alt="中文版" /></a>
+</div>
+
+# FastAPP-Flux-Kontext
+
+Fast image generation and editing in a single application.
+
+<p align="center">
+  <img src="docs/app.png" alt="FastAPP-Flux-Kontext Interface">
+</p>
+
+## Prerequisites
+
+**System & Hardware**
+- Windows 10/11
+- NVIDIA GPU compatible with CUDA 12.6
+- 16 GB of RAM (minimum)
+- 4 GB of VRAM (minimum)
+- *Note: This code was tested on a setup with 64 GB of RAM and 12 GB of VRAM.*
+
+---
+
+## Automatic Installation
+
+### 1. Download
+
+Use the executable available in the [GitHub Releases](https://github.com/Juste-Leo2/FastAPP-Flux-Kontext/releases).
+
+### 2. Launch
+
+Windows Defender SmartScreen may prevent the application from running, identifying it as unrecognized software.
+<br>
+<img src="docs/windows_screen.png" alt="Windows Defender SmartScreen prompt" width="500">
+<br>
+Click on **More info**, then **Run anyway**.
+
+### 3. Installation Path
+
+Prefer standard installation locations (e.g., your Desktop or Documents folder). Avoid protected system folders like `C:\Program Files`.
+
+---
+
+## Manual Installation
+
+**Required Software**
+- [Anaconda](https://www.anaconda.com/products/individual)
+
+### 1. Clone the Repository
+
+Start by cloning the GitHub repository to a directory of your choice.
+
+```bash
+git clone https://github.com/Juste-Leo2/FastAPP-Flux-Kontext.git
+cd FastAPP-Flux-Kontext
+```
+
+### 2. Create and Activate Conda Environment
+
+Create a specific Conda environment for this project and activate it.
+
+```bash
+conda create -n flux_env python=3.12.1 ca-certificates certifi openssl -y
+conda activate flux_env
+```
+
+### 3. Install CUDA
+
+Install the compatible CUDA version via Conda.
+
+```bash
+conda install -c nvidia/label/cuda-12.6.0 cuda -y
+```
+
+### 4. Install uv
+
+Install `uv`, a faster package manager for Python.
+
+```bash
+pip install uv
+```
+
+### 5. Install Python Dependencies
+
+Install all project dependencies listed in the `requirements.txt` file.
+
+```bash
+uv pip install -r requirements.txt
+```
+
+### 6. Install PyTorch with CUDA Support
+
+Install the appropriate PyTorch version for GPU support.
+
+```bash
+uv pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu126 --reinstall
+```
+
+### 7. Verify GPU Detection by PyTorch
+
+Run the following command to ensure your GPU is correctly detected.
+
+```bash
+python -c "import torch; assert torch.cuda.is_available(), 'PyTorch did not detect CUDA!'"
+```
+
+### 8. Download Models
+
+Download the required models from the direct links below and place them in the `models/` folder.
+
+- [Download Diffuser (FLUX.1)](https://huggingface.co/mit-han-lab/nunchaku-flux.1-kontext-dev/resolve/main/svdq-int4_r32-flux.1-kontext-dev.safetensors)
+- [Download Autoencoder (AE)](https://huggingface.co/Comfy-Org/Lumina_Image_2.0_Repackaged/resolve/main/split_files/vae/ae.safetensors)
+- [Download T5 Encoder](https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp8_e4m3fn_scaled.safetensors)
+- [Download CLIP-L Encoder](https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors)
+- [Download LoRA (Turbo)](https://huggingface.co/alimama-creative/FLUX.1-Turbo-Alpha/resolve/main/diffusion_pytorch_model.safetensors)
+
+The structure of your `models/` folder should look like this:
+
+```
+FastAPP-Flux-Kontext/
+└── models/
+    ├── svdq-int4_r32-flux.1-kontext-dev.safetensors
+    ├── ae.safetensors
+    ├── t5xxl_fp8_e4m3fn_scaled.safetensors
+    ├── clip_l.safetensors
+    └── diffusion_pytorch_model.safetensors
+```
+
+### 9. Launch the Application
+
+Once the setup is complete, launch the application with the following command:
+
+```bash
+python src/main.py
+```
+
+---
+
+## Acknowledgements
+
+- **[ComfyUI](https://github.com/comfyanonymous/ComfyUI)**: For this incredible project, which served as the basis for a large part of the code.
+- **[black-forest-labs](https://huggingface.co/black-forest-labs)**: For sharing the original FLUX-Kontext weights.
+- **[mit-han-lab](https://huggingface.co/mit-han-lab)**: For quantizing FLUX-Kontext, providing a better size-to-performance ratio.
+
+---
+
+## License
+
+### Project Code
+
+The code for this project is distributed under the GNU General Public License v3.0 (GPLv3). You are free to use, share, and modify the code under the terms specified in the [LICENSE](LICENSE) file.
+
+### Models
+
+**Important:** The pre-trained models required to run this application are subject to a separate license: the **[FLUX.1 [dev] Non-Commercial License](https://huggingface.co/black-forest-labs/FLUX.1-Kontext-dev/blob/main/LICENSE.md)**.
+
+By downloading and using these models, you agree to its terms, which strictly prohibit any commercial use.
+
+
