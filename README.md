@@ -26,21 +26,55 @@ Fast image generation and editing in a single application.
 
 ## Automatic Installation
 
-### 1. Download
+Choose the installation method that suits you best.
 
-Use the executable available in the [GitHub Releases](https://github.com/Juste-Leo2/FastAPP-Flux-Kontext/releases).
+### Method 1: via the Installation Executable
 
-### 2. Launch
+This is the most direct method and simulates a standard Windows application installation. It's perfect if you prefer a single file to download and run, without handling any code.
 
+#### 1. Download
+Download the latest executable from the [GitHub Releases](https://github.com/Juste-Leo2/FastAPP-Flux-Kontext/releases) section.
+
+#### 2. Launch
 Windows Defender SmartScreen may prevent the application from running, identifying it as unrecognized software.
 <br>
 <img src="docs/windows_screen.png" alt="Windows Defender SmartScreen prompt" width="500">
 <br>
-Click on **More info**, then **Run anyway**.
+To proceed, click on **More info**, then **Run anyway**.
 
-### 3. Installation Path
+#### 3. Installation Path
+Prefer standard installation locations (e.g., your Desktop or Documents folder). Avoid protected system folders like `C:\Program Files`, which could cause permission issues.
 
-Prefer standard installation locations (e.g., your Desktop or Documents folder). Avoid protected system folders like `C:\Program Files`.
+---
+
+### Method 2: via Repository Scripts (Transparency and Control)
+
+This method gives you full control and complete transparency. It's recommended if you prefer to avoid pre-compiled executables or want to inspect the code before running it. Although getting the code is an initial step, **the installation remains fully automatic thanks to the provided scripts**.
+
+You can inspect the scripts' code before running them to verify their content:
+- The installation logic is visible in `setup.bat`, `src/setup.ps1`, and `src/install_steps.bat`.
+- The application launch script is `run.bat` and `src/run.ps1`.
+
+#### 1. Get the Source Code
+You have two options:
+
+*   **Option A (with Git):** Open a terminal and clone the repository.
+    ```bash
+    git clone https://github.com/Juste-Leo2/FastAPP-Flux-Kontext.git
+    cd FastAPP-Flux-Kontext
+    ```
+*   **Option B (without Git):** Click the green `<> Code` button at the top of the repository page, then `Download ZIP`. Unzip the archive into a folder of your choice.
+
+#### 2. Run the Automatic Installation (`setup.bat`)
+Once inside the project folder, double-click the `setup.bat` file. This script will automatically install all necessary components.
+
+**Warning:** Windows Defender SmartScreen may also block this script. As with the executable, click **More info**, then **Run anyway** to allow it.
+
+#### 3. Launch the Application (`run.bat`)
+After installation, double-click `run.bat` to start the application. You can create a shortcut for this file on your desktop for easier access.
+
+
+
 
 ---
 

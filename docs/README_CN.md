@@ -23,21 +23,54 @@
 
 ## 自动安装
 
-### 1. 下载
+请选择最适合您的安装方法。
 
-使用 [GitHub Releases](https://github.com/Juste-Leo2/FastAPP-Flux-Kontext/releases) 中提供的可执行文件。
+### 方法一：通过安装可执行文件
 
-### 2. 启动
+这是最直接的方法，模拟了标准的 Windows 应用程序安装过程。如果您倾向于下载并运行单个文件，而不想处理任何代码，那么这是完美的选择。
 
-Windows Defender SmartScreen 可能会阻止应用程序运行，因为它会将其识别为无法识别的软件。
+#### 1. 下载
+从 [GitHub Releases](https://github.com/Juste-Leo2/FastAPP-Flux-Kontext/releases) 部分下载最新的可执行文件。
+
+#### 2. 启动
+Windows Defender SmartScreen 可能会阻止应用程序运行，因为它是一个未被广泛识别的软件。
 <br>
-<img src="windows_screen.png" alt="Windows Defender SmartScreen 提示" width="500">
+<img src="windows_screen.png" alt="Windows Defender SmartScreen 屏幕" width="500">
 <br>
-点击**更多信息**，然后点击**仍要运行**。
+要继续，请点击 **更多信息**，然后点击 **仍要运行**。
 
-### 3. 安装路径
+#### 3. 安装路径
+请选择标准的安装位置（例如您的桌面或文档文件夹）。避免受保护的系统文件夹，如 `C:\Program Files`，这可能会导致权限问题。
 
-请选择标准安装位置（例如，您的桌面或“文档”文件夹）。避免使用受保护的系统文件夹，如 `C:\Program Files`。
+---
+
+### 方法二：通过仓库脚本（透明与可控）
+
+此方法为您提供完全的控制和透明度。如果您希望避免使用预编译的可执行文件，或者想在运行前检查代码，推荐使用此方法。尽管获取代码是第一步，但**借助提供的脚本，安装过程仍然是全自动的**。
+
+您可以在运行前检查脚本代码以验证其内容：
+- 安装逻辑在 `setup.bat`、`src/setup.ps1` 和 `src/install_steps.bat` 文件中可见。
+- 应用程序的启动脚本是 `run.bat` 和 `src/run.ps1`。
+
+#### 1. 获取源代码
+您有两种选择：
+
+*   **选项A (使用 Git):** 打开终端并克隆仓库。
+    ```bash
+    git clone https://github.com/Juste-Leo2/FastAPP-Flux-Kontext.git
+    cd FastAPP-Flux-Kontext
+    ```
+*   **选项B (不使用 Git):** 在仓库页面顶部点击绿色的 `<> Code` 按钮，然后点击 `Download ZIP`。将压缩包解压到您选择的文件夹中。
+
+#### 2. 运行自动安装 (`setup.bat`)
+进入项目文件夹后，双击 `setup.bat` 文件。此脚本将自动安装所有必需的组件。
+
+**警告：** Windows Defender SmartScreen 也可能阻止此脚本运行。与可执行文件一样，请点击 **更多信息**，然后点击 **仍要运行** 以允许其执行。
+
+#### 3. 启动应用程序 (`run.bat`)
+安装完成后，双击 `run.bat` 以启动应用程序。您可以在桌面上为此文件创建一个快捷方式，以便更轻松地访问。
+
+
 
 ---
 

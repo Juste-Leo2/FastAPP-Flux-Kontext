@@ -21,23 +21,54 @@ Génération et édition rapides d'images dans une seule application.
 
 ---
 
-## Installation Automatique
+## Installation automatique
 
-### 1. Téléchargement
+Choisissez la méthode d'installation qui vous convient le mieux.
 
-Utilisez l'exécutable disponible dans les [releases GitHub](https://github.com/Juste-Leo2/FastAPP-Flux-Kontext/releases).
+### Méthode 1 : via l'Exécutable d'Installation
 
-### 2. Lancement
+Cette méthode est la plus directe et simule l'installation d'une application Windows classique. Elle est parfaite si vous préférez un simple fichier à télécharger et à lancer, sans manipulation de code.
 
-L'écran Windows Defender SmartScreen peut bloquer l'exécution de l'application, la considérant à tort comme un logiciel non reconnu.
+#### 1. Téléchargement
+Téléchargez la dernière version de l'exécutable depuis la section [Releases de GitHub](https://github.com/Juste-Leo2/FastAPP-Flux-Kontext/releases).
+
+#### 2. Lancement
+Windows Defender SmartScreen peut bloquer l'exécution de l'application, car elle n'est pas encore largement reconnue.
 <br>
 <img src="windows_screen.png" alt="Écran Windows Defender SmartScreen" width="500">
 <br>
-Cliquez sur **Informations complémentaires**, puis sur **Exécuter quand même**.
+Pour continuer, cliquez sur **Informations complémentaires**, puis sur **Exécuter quand même**.
 
-### 3. Emplacement d'installation
+#### 3. Emplacement d'installation
+Préférez un emplacement d'installation standard (comme votre Bureau ou le dossier Documents). Évitez les dossiers système protégés comme `C:\Program Files`, qui pourraient causer des problèmes de permissions.
 
-Privilégiez des emplacements standards (par exemple, sur votre bureau ou dans vos documents). Évitez les dossiers système protégés comme `C:\Program Files`.
+---
+
+### Méthode 2 : via les Scripts du Dépôt (Transparence et Contrôle)
+
+Cette méthode vous offre un contrôle total et une transparence complète. Elle est recommandée si vous préférez éviter les exécutables pré-compilés ou si vous souhaitez inspecter le code avant de l'exécuter. Bien que l'obtention du code soit une étape initiale, **l'installation reste entièrement automatique grâce aux scripts fournis**.
+
+Vous pouvez inspecter le code des scripts avant de les lancer pour vérifier leur contenu :
+- La logique d'installation est visible dans `setup.bat`, `src/setup.ps1` et `src/install_steps.bat`.
+- Le script de lancement de l'application est `run.bat` et `src/run.ps1`.
+
+#### 1. Obtenir le Code Source
+Vous avez deux options :
+
+*   **Option A (avec Git) :** Ouvrez un terminal et clonez le dépôt.
+    ```bash
+    git clone https://github.com/Juste-Leo2/FastAPP-Flux-Kontext.git
+    cd FastAPP-Flux-Kontext
+    ```
+*   **Option B (sans Git) :** Cliquez sur le bouton vert `<> Code` en haut de la page du dépôt, puis sur `Download ZIP`. Décompressez l'archive dans le dossier de votre choix.
+
+#### 2. Lancer l'Installation Automatique (`setup.bat`)
+Une fois dans le dossier du projet, double-cliquez sur le fichier `setup.bat`. Ce script installera automatiquement tous les composants nécessaires.
+
+**Avertissement :** Windows Defender SmartScreen peut également bloquer l'exécution de ce script. Comme pour l'exécutable, cliquez sur **Informations complémentaires**, puis sur **Exécuter quand même** pour l'autoriser.
+
+#### 3. Lancer l'application (`run.bat`)
+Après l'installation, double-cliquez sur `run.bat` pour démarrer l'application. Vous pouvez créer un raccourci de ce fichier sur votre bureau pour un accès plus facile.
 
 ---
 
