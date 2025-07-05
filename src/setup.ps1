@@ -17,18 +17,18 @@ $newBackgroundColor = "Black"
 $newForegroundColor = "Gray"
 
 # --- Script Environment ---
-# On suppose que ce script se trouve dans un sous-dossier (ex: /src) du projet.
-# $ProjectRoot pointera donc vers le dossier parent (la racine).
+# We assume this script is located in a sub-folder (e.g., /src) of the project.
+# $ProjectRoot will therefore point to the parent folder (the root).
 $ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $MinicondaFullPath = Join-Path $ProjectRoot $MinicondaPath
 $CondaExecutable = Join-Path $MinicondaFullPath "Scripts\conda.exe"
 
-# Sauvegarder l'état original de la console
+# Save the original console state
 $originalState = $Host.UI.RawUI
 $originalTitle = $Host.UI.RawUI.WindowTitle
 
 try {
-    # --- Configuration de la nouvelle fenêtre de console ---
+    # --- Configure the new console window ---
     $Host.UI.RawUI.WindowTitle = "$AppName Setup"
     $Host.UI.RawUI.BackgroundColor = $newBackgroundColor
     $Host.UI.RawUI.ForegroundColor = $newForegroundColor
@@ -39,7 +39,7 @@ try {
     Clear-Host
 
     # =================================================================
-    # ==                 FONCTIONS D'AIDE (UI)                       ==
+    # ==                 UI HELPER FUNCTIONS                         ==
     # =================================================================
 
     function Write-Centered-Box {
@@ -99,8 +99,8 @@ try {
         param([string]$Message, [int]$StepNumber, [ref]$CurrentStepCounter, [int]$TotalSteps)
         $CurrentStepCounter.Value++; Write-Progress-UI -Message $Message -CurrentStep $CurrentStepCounter.Value -TotalSteps $TotalSteps
 
-        # --- CORRECTION DÉFINITIVE ---
-        # On spécifie le chemin complet du script ET on force le répertoire de travail à être la RACINE DU PROJET.
+        # --- FINAL FIX ---
+        # We specify the full path to the script AND force the working directory to be the PROJECT ROOT.
         $batchScriptFullPath = Join-Path $PSScriptRoot $BatchInstallerScript
         $process = Start-Process "cmd.exe" -ArgumentList "/c `"$batchScriptFullPath`" $StepNumber" -WorkingDirectory $ProjectRoot -Wait -NoNewWindow -PassThru -RedirectStandardOutput "output.log" -RedirectStandardError "error.log"
 
@@ -108,46 +108,47 @@ try {
             Clear-Host
             $errorLog = Get-Content "error.log" -ErrorAction SilentlyContinue
             $outputLog = Get-Content "output.log" -ErrorAction SilentlyContinue
-            $errorContent = @("ERREUR CRITIQUE", "", "L'étape a échoué: $Message", "Le script batch a retourné un code d'erreur.", "--- Détails depuis le journal d'erreurs ---", $errorLog, "--- Détails depuis le journal de sortie ---", $outputLog)
-            Write-Centered-Box -Content $errorContent -ColorMap @{ 0 = "Red"; 2 = "Red"; 3 = "Red" }; Read-Host "`n`nAppuyez sur Entrée pour quitter"; Exit 1
+            $errorContent = @("CRITICAL ERROR", "", "The step failed: $Message", "The batch script returned an error code.", "--- Details from error.log ---", $errorLog, "--- Details from output.log ---", $outputLog)
+            Write-Centered-Box -Content $errorContent -ColorMap @{ 0 = "Red"; 2 = "Red"; 3 = "Red" }; Read-Host "`n`nPress Enter to exit"; Exit 1
         }
     }
 
     # =================================================================
-    # ==                       SCRIPT PRINCIPAL                      ==
+    # ==                       MAIN SCRIPT                           ==
     # =================================================================
 
     $InstallationSteps = @(
-        [pscustomobject]@{ Number = 1; Message = "Installation de Python 3.12.1..." },
-        [pscustomobject]@{ Number = 2; Message = "Installation des librairies CUDA 12.6..." },
-        [pscustomobject]@{ Number = 3; Message = "Installation de l'outil 'uv'..." },
-        [pscustomobject]@{ Number = 4; Message = "Installation des dépendances Python..." },
-        [pscustomobject]@{ Number = 5; Message = "Installation de PyTorch pour GPU NVIDIA..." },
-        [pscustomobject]@{ Number = 6; Message = "Vérification de l'intégration PyTorch + CUDA..." },
-        [pscustomobject]@{ Number = 7; Message = "Installation du client HuggingFace Hub..." },
-        [pscustomobject]@{ Number = 8; Message = "Téléchargement des modèles (peut être long)..." },
-        [pscustomobject]@{ Number = 9; Message = "Organisation des fichiers de modèles..." }
+        [pscustomobject]@{ Number = 1; Message = "Installing Python 3.12.1..." },
+        [pscustomobject]@{ Number = 2; Message = "Installing CUDA 12.6 libraries..." },
+        [pscustomobject]@{ Number = 3; Message = "Installing the 'uv' tool..." },
+        [pscustomobject]@{ Number = 4; Message = "Installing Python dependencies..." },
+        [pscustomobject]@{ Number = 5; Message = "Installing PyTorch for NVIDIA GPU..." },
+        [pscustomobject]@{ Number = 6; Message = "Verifying PyTorch + CUDA integration..." },
+        [pscustomobject]@{ Number = 7; Message = "Installing HuggingFace Hub client..." },
+        [pscustomobject]@{ Number = 8; Message = "Downloading models (this may take a while)..." },
+        [pscustomobject]@{ Number = 9; Message = "Organizing model files..." }
     )
     $TotalSteps = $InstallationSteps.Count + 2; $currentStep = 0
 
     if (-not (Test-Path $CondaExecutable)) {
-        $currentStep++; Write-Progress-UI -Message "Téléchargement de Miniconda..." -CurrentStep $currentStep -Total $TotalSteps
+        $currentStep++; Write-Progress-UI -Message "Downloading Miniconda..." -CurrentStep $currentStep -Total $TotalSteps
         $installerFullPath = Join-Path $ProjectRoot $InstallerName
-        try { Start-BitsTransfer -Source $MinicondaUrl -Destination $installerFullPath } catch { Write-Centered-Box -Content @("ERREUR", "", "Le téléchargement de Miniconda a ÉCHOUÉ.") -ColorMap @{0="Red"; 2="Red"}; Read-Host "Appuyez sur Entrée pour quitter"; Exit 1 }
-        $currentStep++; Write-Progress-UI -Message "Installation de Miniconda..." -CurrentStep $currentStep -Total $TotalSteps
+        try { Start-BitsTransfer -Source $MinicondaUrl -Destination $installerFullPath } catch { Write-Centered-Box -Content @("ERROR", "", "Miniconda download FAILED.") -ColorMap @{0="Red"; 2="Red"}; Read-Host "Press Enter to exit"; Exit 1 }
+        $currentStep++; Write-Progress-UI -Message "Installing Miniconda..." -CurrentStep $currentStep -Total $TotalSteps
         Start-Process -FilePath $installerFullPath -ArgumentList "/InstallationType=JustMe /AddToPath=0 /RegisterPython=0 /NoRegistry=1 /S /D=$MinicondaFullPath" -Wait
         Remove-Item $installerFullPath -ErrorAction SilentlyContinue
     } else { $currentStep += 2 }
 
-    if (-not (Test-Path $CondaExecutable)) { Write-Centered-Box -Content @("ERREUR", "", "L'installation de Miniconda a ÉCHOUÉ.") -ColorMap @{0="Red"; 2="Red"}; Read-Host "Appuyez sur Entrée pour quitter"; Exit 1 }
+    if (-not (Test-Path $CondaExecutable)) { Write-Centered-Box -Content @("ERROR", "", "Miniconda installation FAILED.") -ColorMap @{0="Red"; 2="Red"}; Read-Host "Press Enter to exit"; Exit 1 }
 
     foreach ($step in $InstallationSteps) { Execute-Step -Message $step.Message -StepNumber $step.Number -CurrentStepCounter ([ref]$currentStep) -TotalSteps $TotalSteps }
 
     Clear-Host
-    $finalMessage = @("INSTALLATION TERMINÉE AVEC SUCCÈS !", "", "Vous pouvez maintenant lancer l'application.")
-    Write-Centered-Box -Content $finalMessage -ColorMap @{ 0 = "Green"; 2 = "Green" }; Read-Host "`n`n`nAppuyez sur Entrée pour quitter"
+    $finalMessage = @("INSTALLATION COMPLETED SUCCESSFULLY!", "", "You can now launch the application.")
+    Write-Centered-Box -Content $finalMessage -ColorMap @{ 0 = "Green"; 2 = "Green" }; Read-Host "`n`n`nPress Enter to exit"
 
 } finally {
+    # Restore the original console state and clean up logs
     $Host.UI.RawUI.ForegroundColor = $originalState.ForegroundColor; $Host.UI.RawUI.BackgroundColor = $originalState.BackgroundColor
     $Host.UI.RawUI.WindowSize = $originalState.WindowSize; $Host.UI.RawUI.BufferSize = $originalState.BufferSize
     $Host.UI.RawUI.WindowTitle = $originalTitle; Remove-Item "output.log" -EA 0; Remove-Item "error.log" -EA 0

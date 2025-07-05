@@ -17,7 +17,7 @@ Fast image generation and editing in a single application.
 
 **System & Hardware**
 - Windows 10/11
-- NVIDIA GPU compatible with CUDA 12.6
+- NVIDIA RTX graphics card with the latest drivers installed.
 - 16 GB of RAM (minimum)
 - 4 GB of VRAM (minimum)
 - *Note: This code was tested on a setup with 64 GB of RAM and 12 GB of VRAM.*
