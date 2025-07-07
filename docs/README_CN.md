@@ -14,7 +14,7 @@
 
 **系统与硬件**
 - Windows 10/11
-- 兼容 CUDA 12.6 的 NVIDIA GPU
+- 已安装最新驱动程序的 NVIDIA RTX 显卡。
 - 16 GB RAM (最低)
 - 4 GB VRAM (最低)
 - *注意：此代码已在 64 GB RAM 和 12 GB VRAM 的配置上进行测试。*
@@ -102,7 +102,7 @@ conda activate flux_env
 通过 Conda 安装兼容的 CUDA 版本。
 
 ```bash
-conda install -c nvidia/label/cuda-12.6.0 cuda -y
+conda install -c nvidia/label/cuda-12.8.0 cuda -y
 ```
 
 ### 4. 安装 uv
@@ -126,7 +126,7 @@ uv pip install -r requirements.txt
 安装适合 GPU 支持的 PyTorch 版本。
 
 ```bash
-uv pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu126 --reinstall
+uv pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu128 --reinstall
 ```
 
 ### 7. 验证 PyTorch 是否检测到 GPU
@@ -137,27 +137,46 @@ uv pip install torch torchvision torchaudio --extra-index-url https://download.p
 python -c "import torch; assert torch.cuda.is_available(), 'PyTorch 未检测到 CUDA！'"
 ```
 
+
 ### 8. 下载模型
 
-从下面的直接链接下载所需的模型，并将它们放在 `models/` 文件夹中。
+从以下链接下载所需的模型，并将它们放入 `models/` 文件夹中。
 
-- [下载 Diffuser (FLUX.1)](https://huggingface.co/mit-han-lab/nunchaku-flux.1-kontext-dev/resolve/main/svdq-int4_r32-flux.1-kontext-dev.safetensors)
-- [下载 Autoencoder (AE)](https://huggingface.co/Comfy-Org/Lumina_Image_2.0_Repackaged/resolve/main/split_files/vae/ae.safetensors)
-- [下载 T5 Encoder](https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp8_e4m3fn_scaled.safetensors)
-- [下载 CLIP-L Encoder](https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors)
-- [下载 LoRA (Turbo)](https://huggingface.co/alimama-creative/FLUX.1-Turbo-Alpha/resolve/main/diffusion_pytorch_model.safetensors)
+---
 
-您的 `models/` 文件夹结构应如下所示：
+#### 主模型（扩散器）
+
+**根据您的显卡选择：**
+
+- **适用于 RTX 2000、3000、4000 显卡**  
+  [svdq-int4_r32-flux.1-kontext-dev.safetensors](https://huggingface.co/mit-han-lab/nunchaku-flux.1-kontext-dev/resolve/main/svdq-int4_r32-flux.1-kontext-dev.safetensors)
+
+- **适用于 RTX 5000 显卡**  
+  [svdq-fp4_r32-flux.1-kontext-dev.safetensors](https://huggingface.co/mit-han-lab/nunchaku-flux.1-kontext-dev/resolve/main/svdq-fp4_r32-flux.1-kontext-dev.safetensors)
+
+---
+
+#### 其他所需模型
+
+- [Autoencoder (AE)](https://huggingface.co/Comfy-Org/Lumina_Image_2.0_Repackaged/resolve/main/split_files/vae/ae.safetensors)  
+- [T5 Encoder](https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp8_e4m3fn_scaled.safetensors)  
+- [CLIP-L Encoder](https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors)  
+- [LoRA (Turbo)](https://huggingface.co/alimama-creative/FLUX.1-Turbo-Alpha/resolve/main/diffusion_pytorch_model.safetensors)
+
+---
+
+### `models/` 文件夹的预期结构
 
 ```
-FastAPP-Flux-Kontext/
-└── models/
-    ├── svdq-int4_r32-flux.1-kontext-dev.safetensors
-    ├── ae.safetensors
-    ├── t5xxl_fp8_e4m3fn_scaled.safetensors
-    ├── clip_l.safetensors
-    └── diffusion_pytorch_model.safetensors
+models/
+├── svdq-int4_r32-flux.1-kontext-dev.safetensors   （或 svdq-fp4_r32-flux.1-kontext-dev.safetensors，取决于您的显卡）
+├── ae.safetensors
+├── t5xxl_fp8_e4m3fn_scaled.safetensors
+├── clip_l.safetensors
+└── diffusion_pytorch_model.safetensors
 ```
+
+
 
 ### 9. 启动应用程序
 

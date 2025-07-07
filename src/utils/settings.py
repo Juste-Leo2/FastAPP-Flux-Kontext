@@ -27,16 +27,13 @@ class SettingsManager:
             "edition": {
                 "steps": 10,
                 "cfg": 1.0,
-                "denoise": 1.0, # Pour le slider principal
-                "guidance": 2.5 # Nouveau paramètre
+                "denoise": 1.0,
+                "guidance": 2.5
             },
             "correction": {
                 "steps": 3,
                 "cfg": 1.0,
                 "denoise": 0.2
-            },
-            "general": {
-                "memory_mode": "performant" # performant, economical
             }
         }
 

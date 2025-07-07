@@ -106,7 +106,7 @@ conda activate flux_env
 Install the compatible CUDA version via Conda.
 
 ```bash
-conda install -c nvidia/label/cuda-12.6.0 cuda -y
+conda install -c nvidia/label/cuda-12.8.0 cuda -y
 ```
 
 ### 4. Install uv
@@ -130,7 +130,7 @@ uv pip install -r requirements.txt
 Install the appropriate PyTorch version for GPU support.
 
 ```bash
-uv pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu126 --reinstall
+uv pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu128 --reinstall
 ```
 
 ### 7. Verify GPU Detection by PyTorch
@@ -141,27 +141,44 @@ Run the following command to ensure your GPU is correctly detected.
 python -c "import torch; assert torch.cuda.is_available(), 'PyTorch did not detect CUDA!'"
 ```
 
-### 8. Download Models
+### 8. Download the Models
 
-Download the required models from the direct links below and place them in the `models/` folder.
+Download the required models from the links below and place them in the `models/` folder.
 
-- [Download Diffuser (FLUX.1)](https://huggingface.co/mit-han-lab/nunchaku-flux.1-kontext-dev/resolve/main/svdq-int4_r32-flux.1-kontext-dev.safetensors)
-- [Download Autoencoder (AE)](https://huggingface.co/Comfy-Org/Lumina_Image_2.0_Repackaged/resolve/main/split_files/vae/ae.safetensors)
-- [Download T5 Encoder](https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp8_e4m3fn_scaled.safetensors)
-- [Download CLIP-L Encoder](https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors)
-- [Download LoRA (Turbo)](https://huggingface.co/alimama-creative/FLUX.1-Turbo-Alpha/resolve/main/diffusion_pytorch_model.safetensors)
+---
 
-The structure of your `models/` folder should look like this:
+#### Main Model (Diffuser)
+
+**Choose according to your GPU:**
+
+- **For RTX 2000, 3000, 4000 cards**  
+  [svdq-int4_r32-flux.1-kontext-dev.safetensors](https://huggingface.co/mit-han-lab/nunchaku-flux.1-kontext-dev/resolve/main/svdq-int4_r32-flux.1-kontext-dev.safetensors)
+
+- **For RTX 5000 cards**  
+  [svdq-fp4_r32-flux.1-kontext-dev.safetensors](https://huggingface.co/mit-han-lab/nunchaku-flux.1-kontext-dev/resolve/main/svdq-fp4_r32-flux.1-kontext-dev.safetensors)
+
+---
+
+#### Other Required Models
+
+- [Autoencoder (AE)](https://huggingface.co/Comfy-Org/Lumina_Image_2.0_Repackaged/resolve/main/split_files/vae/ae.safetensors)  
+- [T5 Encoder](https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp8_e4m3fn_scaled.safetensors)  
+- [CLIP-L Encoder](https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors)  
+- [LoRA (Turbo)](https://huggingface.co/alimama-creative/FLUX.1-Turbo-Alpha/resolve/main/diffusion_pytorch_model.safetensors)
+
+---
+
+### Expected Folder Structure for `models/`
 
 ```
-FastAPP-Flux-Kontext/
-└── models/
-    ├── svdq-int4_r32-flux.1-kontext-dev.safetensors
-    ├── ae.safetensors
-    ├── t5xxl_fp8_e4m3fn_scaled.safetensors
-    ├── clip_l.safetensors
-    └── diffusion_pytorch_model.safetensors
+models/
+├── svdq-int4_r32-flux.1-kontext-dev.safetensors   (or svdq-fp4_r32-flux.1-kontext-dev.safetensors depending on your GPU)
+├── ae.safetensors
+├── t5xxl_fp8_e4m3fn_scaled.safetensors
+├── clip_l.safetensors
+└── diffusion_pytorch_model.safetensors
 ```
+
 
 ### 9. Launch the Application
 

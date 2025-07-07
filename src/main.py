@@ -70,13 +70,10 @@ class App(ctk.CTk):
     def _create_widgets(self):
         self.controls_frame = ctk.CTkFrame(self, width=380, corner_radius=0)
         self.controls_frame.grid(row=0, column=0, rowspan=2, sticky="nsw")
-        self.controls_frame.grid_rowconfigure(6, weight=1)
+        self.controls_frame.grid_rowconfigure(4, weight=1) # Ajustement de l'index pour la rangée qui s'étend
         self.settings_button = ctk.CTkButton(self.controls_frame, anchor="w", command=self._open_settings_panel)
         self.settings_button.pack(padx=20, pady=10, fill="x")
         ctk.CTkFrame(self.controls_frame, height=2, fg_color="gray").pack(padx=20, pady=5, fill="x")
-        self.mem_label = ctk.CTkLabel(self.controls_frame, anchor="w"); self.mem_label.pack(padx=20, pady=(10, 0), fill="x")
-        self.mem_mode_var = ctk.StringVar(value=self.lm.get(f"mode_{self.settings.get('general.memory_mode')}"))
-        self.mem_selector = ctk.CTkSegmentedButton(self.controls_frame, variable=self.mem_mode_var, command=self._on_mem_mode_change); self.mem_selector.pack(padx=20, pady=5, fill="x")
         self.app_mode_label = ctk.CTkLabel(self.controls_frame, anchor="w"); self.app_mode_label.pack(padx=20, pady=(10, 0), fill="x")
         self.app_mode_var = ctk.StringVar(value=self.lm.get("mode_generate"))
         self.app_mode_selector = ctk.CTkSegmentedButton(self.controls_frame, variable=self.app_mode_var, command=self._on_app_mode_change); self.app_mode_selector.pack(padx=20, pady=5, fill="x")
@@ -90,7 +87,6 @@ class App(ctk.CTk):
         ctk.CTkFrame(self.controls_frame, fg_color="transparent").pack(pady=0, expand=True, fill="both")
         self.action_button_frame = ctk.CTkFrame(self.controls_frame, fg_color="transparent"); self.action_button_frame.pack(padx=20, pady=10, fill="x"); self.action_button_frame.grid_columnconfigure((0,1), weight=1)
         self.import_button = ctk.CTkButton(self.action_button_frame, command=self._import_image); self.import_button.grid(row=0, column=0, padx=(0,5), sticky="ew")
-        # --- CORRECTION: Lier directement aux fonctions de démarrage robustes ---
         self.correct_button = ctk.CTkButton(self.action_button_frame, command=self._start_correction_task); self.correct_button.grid(row=0, column=1, padx=(5,0), sticky="ew")
         self.action_button = ctk.CTkButton(self.controls_frame, height=40, command=self._start_task); self.action_button.pack(padx=20, pady=10, fill="x")
         self.status_label = ctk.CTkLabel(self.controls_frame, text="", wraplength=340); self.status_label.pack(padx=20, pady=5)
@@ -129,12 +125,15 @@ class App(ctk.CTk):
         
         self.title(self.lm.get("window_title"))
         self.settings_button.configure(text="⚙️ " + self.lm.get("settings_button"))
-        self.mem_label.configure(text=self.lm.get("memory_management_label"))
-        self.mem_selector.configure(values=[self.lm.get("mode_performant"), self.lm.get("mode_economical")])
         self.app_mode_label.configure(text=self.lm.get("app_mode_label"))
         self.app_mode_selector.configure(values=[self.lm.get("mode_generate"), self.lm.get("mode_edit")])
         self.size_label.configure(text=self.lm.get("size_label"))
-        self.size_selector.configure(values=["1024x1024", "1280x768", "768x1280", "1152x896", "896x1152"])
+        self.size_selector.configure(values=[
+            "672x1568", "688x1504", "720x1456", "752x1392", "800x1328",
+            "832x1248", "880x1184", "944x1104", "1024x1024", "1104x944",
+            "1184x880", "1248x832", "1328x800", "1392x752", "1456x720",
+            "1504x688", "1568x672"
+        ])
         self.prompt_label.configure(text=self.lm.get("positive_prompt_label"))
         self.guidance_slider['label'].configure(text=self.lm.get("guidance_label"))
         self.import_button.configure(text="📥 " + self.lm.get("import_button"))
@@ -186,7 +185,7 @@ class App(ctk.CTk):
     def run_task(self):
         image_path = None
         try:
-            params = {"management_mode": self.lm.get(f"mode_{self.settings.get('general.memory_mode')}"), "progress_callback": self.update_progress_from_thread, "cancel_event": self.cancel_event}
+            params = {"progress_callback": self.update_progress_from_thread, "cancel_event": self.cancel_event}
             if self.app_mode_var.get() == self.lm.get("mode_edit"):
                 if not self.current_pil_image: raise ValueError("No image loaded for editing.")
                 temp_path = os.path.join(self.editor.output_dir, "_temp_input.png"); self.current_pil_image.save(temp_path)
@@ -207,40 +206,21 @@ class App(ctk.CTk):
             if not self.current_pil_image: raise ValueError("No image loaded for correction.")
             temp_path = os.path.join(self.corrector.output_dir, "_temp_input_correct.png"); self.current_pil_image.save(temp_path)
             co_settings = self.settings.get('correction')
-            params = {"input_image_path": temp_path, "management_mode": self.lm.get(f"mode_{self.settings.get('general.memory_mode')}"), "progress_callback": self.update_progress_from_thread, "cancel_event": self.cancel_event, **co_settings}
+            params = {"input_image_path": temp_path, "progress_callback": self.update_progress_from_thread, "cancel_event": self.cancel_event, **co_settings}
             image_path = self.corrector.correct(**params)
         except GenerationCancelledError: self.after(0, self.update_status, "status_generation_cancelled")
         except Exception as e: import traceback; traceback.print_exc(); self.after(0, self.update_status, "status_error", str(e))
         finally: self.after(0, self.task_complete, image_path)
 
     def _on_app_mode_change(self, mode_text):
-        # --- CORRECTION: La gestion de la mémoire est maintenant dans _start_task,
-        # plus besoin de décharger les modèles ici. On met juste l'UI à jour.
         self.update_state()
     
-    def _on_mem_mode_change(self, mode_text):
-        new_mode_logic = 'performant' if mode_text == self.lm.get("mode_performant") else 'economical'
-        
-        # On agit seulement si le mode change réellement
-        if self.settings.get('general.memory_mode') != new_mode_logic:
-            self.settings.set('general.memory_mode', new_mode_logic)
-            
-            # --- CORRECTION : Décharger les modèles à CHAQUE changement de mode mémoire ---
-            # Cela garantit une VRAM propre avant d'adopter le nouveau comportement.
-            # - Perf -> Eco : décharge les modèles persistants.
-            # - Eco -> Perf : décharge les éventuels restes d'une tâche précédente avant de tout charger.
-            self.generator.unload_all_models()
-            self.editor.unload_all_models()
-            self.corrector.unload_all_models()
-
     def _import_image(self):
         if self.is_generating: return
         path = filedialog.askopenfilename(filetypes=[("Image Files", "*.png *.jpg *.jpeg *.webp")]);
         if not path: return
         self.current_pil_image = Image.open(path).convert("RGB"); self.image_history = self.image_history[:self.history_index + 1]; self.image_history.append({"path": path, "pil": self.current_pil_image}); self.history_index = len(self.image_history) - 1
         self.app_mode_var.set(self.lm.get("mode_edit")); self.display_image(self.current_pil_image)
-        # --- CORRECTION: La gestion de la mémoire est maintenant dans _start_task,
-        # plus besoin de décharger les modèles ici. On met juste l'UI à jour.
         self.update_state()
 
     def display_image(self, pil_image):
@@ -259,31 +239,11 @@ class App(ctk.CTk):
     def _start_task(self):
         """Fonction de démarrage pour 'Générer' et 'Éditer'."""
         if self.is_generating: return
-        
-        # --- CORRECTION: Gestion centralisée de la VRAM pour le mode Performance ---
-        if self.settings.get('general.memory_mode') == 'performant':
-            current_mode = self.app_mode_var.get()
-            if current_mode == self.lm.get("mode_generate"):
-                # On va générer, donc on s'assure que les modules Édition et Correction sont déchargés.
-                self.editor.unload_all_models()
-                self.corrector.unload_all_models()
-            else: # mode_edit
-                # On va éditer, donc on s'assure que les modules Génération et Correction sont déchargés.
-                self.generator.unload_all_models()
-                self.corrector.unload_all_models()
-
         self._start_generic_task(self.run_task, self.action_button)
         
     def _start_correction_task(self):
         """Fonction de démarrage pour 'Corriger'."""
         if self.is_generating: return
-        
-        # --- CORRECTION: Gestion centralisée de la VRAM pour le mode Performance ---
-        if self.settings.get('general.memory_mode') == 'performant':
-            # On va corriger, donc on s'assure que Génération et Édition sont déchargés.
-            self.generator.unload_all_models()
-            self.editor.unload_all_models()
-
         self._start_generic_task(self.run_correction_task, self.correct_button)
         
     def _start_generic_task(self, task_function, button):
@@ -315,7 +275,6 @@ class App(ctk.CTk):
                 self.display_image(new_image)
                 
                 # Passer automatiquement en mode édition après une génération réussie.
-                # Ne pas changer de mode si on vient de faire une correction.
                 if self.app_mode_var.get() == self.lm.get("mode_generate"):
                     self.app_mode_var.set(self.lm.get("mode_edit"))
                     self._on_app_mode_change(None) # Appeler manuellement pour MAJ UI

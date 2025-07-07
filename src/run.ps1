@@ -1,5 +1,5 @@
 # =================================================================
-# ==            APPLICATION LAUNCHER FOR CHROMA-GGUF             ==
+# ==            APPLICATION LAUNCHER FOR FLUX KONTEXT APP             ==
 # =================================================================
 #
 # This script is designed to be run silently. Its only purpose is to:
